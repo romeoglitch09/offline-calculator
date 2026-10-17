@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            
+            /* --- BACKGROUND IMAGE CONFIGURATION --- */
+            background-image: url('Untitled design.jpg'); 
+            background-size: cover;       
+            background-position: center;  
+            background-repeat: no-repeat; 
+            background-attachment: fixed; 
+            
+            padding: 20px;
+        }
+
+        /* --- CONFETTI & FIREWORKS CANVAS LAYER --- */
+        #confetti-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh; /* Set to 100vh so full-screen firework explosions show up */
+            pointer-events: none; /* Allows clicks to pass through safely */
+            z-index: 10;
+        }
+
+        .header-info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ffffff; 
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7); 
+            position: relative;
+            z-index: 20;
+        }
+
+        .header-info h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .header-info p {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+        }
+
+        /* FIXED: Changed flex layout behavior to keep calculator centered and visible */
+        .calculator-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: auto 0; /* Perfectly centers calculator vertically on screen */
+            position: relative;
+            z-index: 20;
+        }
+
+        .calculator {
+            width: 100%;
+            max-width: 500px; /* Clean landscape width setup */
+            background-color: #17181f;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: none; /* FLAT DESIGN: All shadows stripped */
+        }
+
+        .display {
+            width: 100%;
+            height: 70px;
+            background-color: #17181f;
+            border: none;
+            color: #ffffff;
+            text-align: right;
+            padding: 10px;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            width: 100%;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px 0;
+            border-radius: 8px; /* Sleek rectangular flat buttons */
+            border: none;
+            font-size: 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, opacity 0.1s;
+            background-color: #2d2f3d;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: none; /* FLAT DESIGN: All button shadows stripped */
+        }
+
+        button:active {
+            opacity: 0.8;
+        }
+
+        .operator {
+            background-color: #ff9f0a;
+            color: #ffffff;
+        }
+
+        .function {
+            background-color: #a5a5a5;
+            color: #000000;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #ffffff; 
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7); 
+            position: relative;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body>
+    <!-- Confetti & Fireworks Canvas Layer -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Top Header Information -->
+    <div class="header-info">
+        <h1>To: Ms. Gia Amor Catapang</h1>
+        <p>BSIT 1ST YR/VMC KAURAN AMPATUAN</p>
+    </div>
+
+    <!-- Calculator Area -->
+    <div class="calculator-container">
+        <div class="calculator">
+            <input type="text" class="display" id="screen" readonly value="0">
+            <div class="buttons">
+                <!-- Layer 1 -->
+                <button class="function" onclick="clearScreen()">C</button>
+                <button class="toggle-btn function" onclick="toggleSign()">+/-</button>
+                <button class="function" onclick="appendValue('%')">%</button>
+                <button class="operator" onclick="appendValue('/')">÷</button>
+
+                <!-- Layer 2 -->
+                <button onclick="appendValue('7')">7</button>
+                <button onclick="appendValue('8')">8</button>
+                <button onclick="appendValue('9')">9</button>
+                <button class="operator" onclick="appendValue('*')">×</button>
+
+                <!-- Layer 3 -->
+                <button onclick="appendValue('4')">4</button>
+                <button onclick="appendValue('5')">5</button>
+                <button onclick="appendValue('6')">6</button>
+                <button class="operator" onclick="appendValue('-')">-</button>
+
+                <!-- Layer 4 -->
+                <button onclick="appendValue('1')">1</button>
+                <button onclick="appendValue('2')">2</button>
+                <button onclick="appendValue('3')">3</button>
+                <button class="operator" onclick="appendValue('+')">+</button>
+
+                <!-- Layer 5 -->
+                <button onclick="appendValue('0')">0</button>
+                <button onclick="appendValue('.')">.</button>
+                <button class="operator" onclick="backspace()">⌫</button>
+                <button class="operator" onclick="calculate()">=</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Footer Rights Reserved -->
+    <footer>
+        <p>&copy; 2026 Romualdo C. Yatco II. All Rights Reserved.</p>
+    </footer>
+
+       <script>
+        const screen = document.getElementById('screen');
+
+        function appendValue(value) {
+            if (screen.value === '0' && !isNaN(value)) {
+                screen.value = value;
+            } else {
+                screen.value += value;
+            }
+        }
+
+        function clearScreen() {
+            screen.value = '0';
+        }
+
+        function toggleSign() {
+            if (screen.value !== '0' && screen.value !== 'Error') {
+                if (screen.value.startsWith('-')) {
+                    screen.value = screen.value.slice(1);
+                } else {
+                    screen.value = '-' + screen.value;
+                }
+            }
+        }
+
+        function backspace() {
+            if (screen.value.length > 1) {
+                screen.value = screen.value.slice(0, -1);
+            } else {
+                screen.value = '0';
+            }
+        }
+
+                                function calculate() {
+            try {
+                let expression = screen.value;
+                expression = expression.replace(/×/g, '*').replace(/÷/g, '/');
+                let result = new Function('return ' + expression)();
+                
+                if (result === undefined || isNaN(result)) {
+                    screen.value = 'Error';
+                } else {
+                    screen.value = Number(result.toFixed(8)).toString();
+                }
+
+                // TRIGGERS FIREWORKS BURST ON SUCCESSFUL EXECUTIONS
+                triggerFireworkBurst();
+            } catch (error) {
+                screen.value = 'Error';
+            }
+        }
+
+        /* --- GLOBAL KEYBOARD EVENT LISTENERS --- */
+        window.addEventListener('keydown', function(event) {
+            // 1. Enter key runs calculations
+            if (event.key === 'Enter') {
+                event.preventDefault(); 
+                calculate();
+            }
+            
+            // 2. Numbers (0 through 9) append to display screen
+            else if (event.key >= '0' && event.key <= '9') {
+                appendValue(event.key);
+            }
+            
+            // 3. Operators append math signs smoothly
+            else if (event.key === '+') {
+                appendValue('+');
+            }
+            else if (event.key === '-') {
+                appendValue('-');
+            }
+            else if (event.key === '*') {
+                appendValue('*'); // Translates multiplication internally
+            }
+            else if (event.key === '/') {
+                event.preventDefault(); // Prevents quick find search feature overrides in browsers
+                appendValue('/'); // Translates division internally
+            }
+            
+            // 4. Decimal Point mapping
+            else if (event.key === '.') {
+                appendValue('.');
+            }
+            
+            // 5. Backspace maps straight to your screen deletion rule
+            else if (event.key === 'Backspace') {
+                backspace();
+            }
+        });
+
+        /* --- UNIFIED RENDERING FX ENGINE --- */
+        const canvas = document.getElementById('confetti-canvas');
+
+        const ctx = canvas.getContext('2d');
+        
+        let confettiArray = [];
+        let fireworkParticles = [];
+        
+        const confettiCount = 60;
+        const colors = ['#ff9f0a', '#a5a5a5', '#2d2f3d', '#ffffff', '#5ac8fa', '#5856d6'];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight; 
+        }
+
+        /* --- CONFETTI ENGINE (UNCHANGED) --- */
+        class ConfettiParticle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * -canvas.height;
+                this.size = Math.random() * 6 + 5;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.speedY = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 2 - 1;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 2 - 1;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotationSpeed;
+                // Restricts confetti flow to top 40% height grid layer zone
+                if (this.y > canvas.height * 0.4) {
+                    this.y = -20;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+                ctx.restore();
+            }
+        }
+
+        /* --- FIREWORKS ENGINE --- */
+        class FireworkParticle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.radius = Math.random() * 2.5 + 1.5;
+                
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 6 + 2;
+                this.speedX = Math.cos(angle) * speed;
+                this.speedY = Math.sin(angle) * speed;
+                
+                this.gravity = 0.12;
+                this.opacity = 1;
+                this.fade = Math.random() * 0.015 + 0.012;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.speedY += this.gravity;
+                this.opacity -= this.fade;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function initConfetti() {
+            confettiArray = [];
+            for (let i = 0; i < confettiCount; i++) {
+                confettiArray.push(new ConfettiParticle());
+            }
+        }
+
+        function triggerFireworkBurst() {
+            const launchPoints = [
+                { x: canvas.width * 0.25, y: canvas.height * 0.3 },
+                { x: canvas.width * 0.5,  y: canvas.height * 0.25 },
+                { x: canvas.width * 0.75, y: canvas.height * 0.3 }
+            ];
+
+            launchPoints.forEach(pt => {
+                const burstColor = colors[Math.floor(Math.random() * colors.length)];
+                for (let i = 0; i < 45; i++) {
+                    fireworkParticles.push(new FireworkParticle(pt.x, pt.y, burstColor));
+                }
+            });
+        }
+
+        /* --- MASTER RUNTIME ANIMATION LOOP --- */
+        function animateEffects() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Render Confetti
+            confettiArray.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            // Render Fireworks
+            for (let i = fireworkParticles.length - 1; i >= 0; i--) {
+                const fp = fireworkParticles[i];
+                fp.update();
+                if (fp.opacity <= 0) {
+                    fireworkParticles.splice(i, 1);
+                } else {
+                    fp.draw();
+                }
+            }
+            
+            requestAnimationFrame(animateEffects);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        initConfetti();
+        animateEffects();
+    </script>
+
+</body>
+</html>
+
