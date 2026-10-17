@@ -80,27 +80,26 @@
             color: #e0e0e0;
         }
 
-        .calculator-container {
+.calculator-container {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    margin-top: 20px;    /* Adds perfect breathing space beneath your QR code label */
-    margin-bottom: 20px; /* Adds breathing space above your footer */
+    margin-top: 30px;    /* Pushes calculator down below the QR code block completely */
+    margin-bottom: 30px; /* Leaves breathing space above your footer text */
     position: relative;
     z-index: 20;
 }
 
-        }
+.calculator {
+    width: 100%;
+    max-width: 500px;    /* LOCKS IT BACK into your crisp landscape shape */
+    background-color: #17181f;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: none;    /* FLAT DESIGN: Kept perfectly flat */
+}
 
-        .calculator {
-            width: 100%;
-            max-width: 500px; /* Clean landscape width setup */
-            background-color: #17181f;
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: none; /* FLAT DESIGN: All shadows stripped */
-        }
 
         .display {
             width: 100%;
