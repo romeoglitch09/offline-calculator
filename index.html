@@ -233,9 +233,7 @@
     <footer>
         <p>&copy; 2026 Romualdo C. Yatco II. All Rights Reserved.</p>
     </footer>
-
-
-       <script>
+    <script>
         const screen = document.getElementById('screen');
 
         function appendValue(value) {
@@ -268,7 +266,7 @@
             }
         }
 
-                                function calculate() {
+        function calculate() {
             try {
                 let expression = screen.value;
                 expression = expression.replace(/×/g, '*').replace(/÷/g, '/');
@@ -280,7 +278,7 @@
                     screen.value = Number(result.toFixed(8)).toString();
                 }
 
-                // TRIGGERS FIREWORKS BURST ON SUCCESSFUL EXECUTIONS
+                // TRIGGERS FIREWORKS BURST ON EQUAL OR ENTER ACTION
                 triggerFireworkBurst();
             } catch (error) {
                 screen.value = 'Error';
@@ -289,18 +287,13 @@
 
         /* --- GLOBAL KEYBOARD EVENT LISTENERS --- */
         window.addEventListener('keydown', function(event) {
-            // 1. Enter key runs calculations
             if (event.key === 'Enter') {
                 event.preventDefault(); 
                 calculate();
             }
-            
-            // 2. Numbers (0 through 9) append to display screen
             else if (event.key >= '0' && event.key <= '9') {
                 appendValue(event.key);
             }
-            
-            // 3. Operators append math signs smoothly
             else if (event.key === '+') {
                 appendValue('+');
             }
@@ -308,19 +301,15 @@
                 appendValue('-');
             }
             else if (event.key === '*') {
-                appendValue('*'); // Translates multiplication internally
+                appendValue('*');
             }
             else if (event.key === '/') {
-                event.preventDefault(); // Prevents quick find search feature overrides in browsers
-                appendValue('/'); // Translates division internally
+                event.preventDefault(); 
+                appendValue('/');
             }
-            
-            // 4. Decimal Point mapping
             else if (event.key === '.') {
                 appendValue('.');
             }
-            
-            // 5. Backspace maps straight to your screen deletion rule
             else if (event.key === 'Backspace') {
                 backspace();
             }
@@ -328,7 +317,6 @@
 
         /* --- UNIFIED RENDERING FX ENGINE --- */
         const canvas = document.getElementById('confetti-canvas');
-
         const ctx = canvas.getContext('2d');
         
         let confettiArray = [];
@@ -342,7 +330,6 @@
             canvas.height = window.innerHeight; 
         }
 
-        /* --- CONFETTI ENGINE (UNCHANGED) --- */
         class ConfettiParticle {
             constructor() {
                 this.x = Math.random() * canvas.width;
@@ -358,7 +345,6 @@
                 this.y += this.speedY;
                 this.x += this.speedX;
                 this.rotation += this.rotationSpeed;
-                // Restricts confetti flow to top 40% height grid layer zone
                 if (this.y > canvas.height * 0.4) {
                     this.y = -20;
                     this.x = Math.random() * canvas.width;
@@ -374,7 +360,6 @@
             }
         }
 
-        /* --- FIREWORKS ENGINE --- */
         class FireworkParticle {
             constructor(x, y, color) {
                 this.x = x;
@@ -430,17 +415,14 @@
             });
         }
 
-        /* --- MASTER RUNTIME ANIMATION LOOP --- */
         function animateEffects() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Render Confetti
             confettiArray.forEach(p => {
                 p.update();
                 p.draw();
             });
 
-            // Render Fireworks
             for (let i = fireworkParticles.length - 1; i >= 0; i--) {
                 const fp = fireworkParticles[i];
                 fp.update();
@@ -459,7 +441,5 @@
         initConfetti();
         animateEffects();
     </script>
-
 </body>
 </html>
-
