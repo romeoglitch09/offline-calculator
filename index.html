@@ -166,40 +166,34 @@
         }
     </style>
 </head>
-
 <body>
-    
     <!-- Confetti & Fireworks Canvas Layer -->
     <canvas id="confetti-canvas"></canvas>
 
     <!-- Top Header Information -->
     <div class="header-info">
-        <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-            <h1>- Ms. Gia Amor Catapang -</h1>
-            <p style="color: #ffffff; margin-top: 8px; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
-                BSIT 1ST YR / VMC KAURAN
-        </div>
-        
+        <h1>- Ms. Gia Amor Catapang -</h1>
+        <p>BSIT 1ST YR / VMC KAURAN</p>
     </div>
 
-        <!-- 2. MIDDLE QR CODE LAYER -->
+    <!-- Middle QR Code Layer -->
     <div class="qr-container">
-        <!-- Inner wrapper to force vertical vertical stacking -->
         <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
             <img src="qr-code.jpg" alt="Scan to use app" class="qr-image">
-            <p style="color: #ffffff; margin-top: 8px; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
+            <p style="color: #ffffff; margin-top: 10px; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
                 download me
             </p>
         </div>
     </div>
 
-
     <!-- Calculator Area -->
     <div class="calculator-container">
         <div class="calculator">
-             <!-- TITLED PANEL HEADER HERE -->
-            <div style="color: #f3f2ef; font-size: 1.2rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; font-family: 'Segoe UI', sans-serif;">
-                Archimedes Calculator
+            <!-- CENTER-ALIGNED TITLED PANEL HEADER HERE -->
+            <div style="color: #ff9f0a; font-size: 1.2rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; text-align: center;">
+                ARCHIMEDES CALCULATOR
+            </div>
+            
             <input type="text" class="display" id="screen" readonly value="0">
             <div class="buttons">
                 <!-- Layer 1 -->
@@ -239,6 +233,7 @@
     <footer>
         <p>&copy; 2026 Romualdo C. Yatco II. All Rights Reserved.</p>
     </footer>
+
 
        <script>
         const screen = document.getElementById('screen');
